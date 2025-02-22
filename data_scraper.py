@@ -1,11 +1,11 @@
-from langchain_community.document_loaders import SeleniumURLLoader
+# from langchain_community.document_loaders import SeleniumURLLoader
 
-from github import Github
+# from github import Github
 
-def linkedin_data(url):
-    loader = SeleniumURLLoader(urls=[url])
-    data = loader.load()
-    return data[0]
+# def linkedin_data(url):
+#     loader = SeleniumURLLoader(urls=[url])
+#     data = loader.load()
+#     return data[0]
 
 def github_data(username):
     client = Github()
