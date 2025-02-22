@@ -1,8 +1,11 @@
-from flask import Flask, request, redirect, session
+from flask import Flask, request, redirect, session, jsonify
 import os
 from dotenv import load_dotenv
 import requests
 from github import Github
+import json
+import fitz  # PyMuPDF for PDF extraction
+import pdfplumber
 
 # Load environment variables from .env file
 load_dotenv()
@@ -19,12 +22,17 @@ CALLBACK_URL = "http://127.0.0.1:5000/github/callback"
 @app.route('/')
 def index():
     return '''
-        <h1>GitHub Project Analyzer</h1>
+        <h1>AI Resume Builder</h1>
         <a href="/login/github">
             <button style="padding: 10px 20px; font-size: 16px;">
                 Login with GitHub
             </button>
-        </a>
+        </a><br><br>
+        <form action="/upload_pdf" method="POST" enctype="multipart/form-data">
+            <label for="pdf_file">Upload PDF Resume:</label>
+            <input type="file" name="pdf_file" accept="application/pdf" required>
+            <button type="submit">Upload PDF</button>
+        </form>
     '''
 
 
@@ -89,14 +97,7 @@ def list_repos():
             repo_summaries.append(summary)
 
     # Generate a high-level resume summary
-    # resume_summary = f"{user.name or user.login} is a software developer skilled in {', '.join(languages) or 'various technologies'}."
-    resume_summary = " They have created multiple projects, including:\n"
-
-    # Print résumé summary in console
-    print("\n📌 GitHub Resume")
-    print("=" * 40)
-    print(resume_summary)
-    print("\n".join(repo_summaries))
+    resume_summary = "They have created multiple projects, including:\n"
 
     # Return résumé summary as a webpage
     formatted_resume = f"<h2>GitHub Resume for {user.name or user.login}</h2><p>{resume_summary}</p><ul>"
@@ -107,9 +108,63 @@ def list_repos():
     return formatted_resume
 
 
+@app.route('/upload_pdf', methods=['POST'])
+def upload_pdf():
+    if 'pdf_file' not in request.files:
+        return 'No file uploaded', 400
+
+    pdf_file = request.files['pdf_file']
+    if pdf_file.filename == '':
+        return 'No selected file', 400
+
+    # Save the PDF temporarily to the server
+    pdf_file_path = os.path.join("uploads", pdf_file.filename)
+    pdf_file.save(pdf_file_path)
+
+    # Extract text from PDF
+    pdf_text = extract_pdf_text(pdf_file_path)
+
+    # Store the raw text for LLM processing (as a whole string)
+    save_pdf_text_for_llm(pdf_text)
+
+    # Clean up the uploaded PDF file (optional)
+    os.remove(pdf_file_path)
+
+    return "PDF text extracted and saved successfully!"
+
+
+def extract_pdf_text(pdf_file_path):
+    # Extract text using PyMuPDF (fitz)
+    doc = fitz.open(pdf_file_path)
+    pdf_text = ""
+    for page_num in range(doc.page_count):
+        page = doc.load_page(page_num)
+        pdf_text += page.get_text()
+    return pdf_text
+
+
+def save_pdf_text_for_llm(text):
+    # You can save the raw text in a file for future processing
+    with open("resume_text.txt", "w") as file:
+        file.write(text)
+
+    # Alternatively, store it in a structured way (JSON) for easier handling
+    resume_data = {
+        "raw_text": text
+    }
+    with open("resume_data.json", "w") as json_file:
+        json.dump(resume_data, json_file)
+
+    print("Text saved for LLM processing.")
+
+
 if __name__ == '__main__':
     # Ensure environment variables are loaded
     if not CLIENT_ID or not CLIENT_SECRET:
         raise ValueError("GitHub OAuth credentials not found. Check your .env file.")
+
+    # Ensure the 'uploads' folder exists
+    if not os.path.exists("uploads"):
+        os.makedirs("uploads")
 
     app.run(debug=True, port=5000)
