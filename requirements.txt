@@ -1,5 +1,7 @@
 elevenlabs
 python-dotenv
-asyncio
 groq
+langchain
+pydantic
+langgraph
 openai

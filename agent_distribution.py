@@ -8,10 +8,9 @@ import getpass
 from typing_extensions import Literal
 from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, Field
-from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
-
-from typing_extensions import List, TypedDict
+from typing_extensions import TypedDict
+from generate_questions import InterviewBot
 
 
 if not os.environ.get("GROQ_API_KEY"):
@@ -39,9 +38,27 @@ class State(TypedDict):
     output: str
     person_context: str
     job_context: str
+    user_id: int
+
+class hr_agent():
+    def __init__(self, person_context=None, job_context=None):
+        super.__init__(hr_agent)
+        self.interviewBot = InterviewBot(job_profile=job_context,
+                                         user_info=person_context)
+        self.job_context = job_context
+        self.person_context = person_context
+
+    def __call__(self, new_messgae: str):
+        state = router_workflow.invoke({
+            "input": new_messgae,
+            "job_context": self.job_context,
+            "person_context": self.person_context
+        })
+        return state["output"]
 
 
-# Nodes
+
+    # Nodes
 def generate_CoverLetter(state: State):
     """Write a Cover Letter"""
 
@@ -81,7 +98,6 @@ def generate_CoverLetter(state: State):
                 """
     result = llm.invoke(prompt)
     return {"output": result.content}
-
 
 def Strike_Interview(state: State):
     """Write a Interview question"""
