@@ -43,11 +43,11 @@ class State(TypedDict):
 
 class hr_agent():
     def __init__(self, user_profile=None):
-        data1  = linkedin_data(user_profile["linkedin_link"])
-        data2 = github_data(user_profile["github_link"])
+        linkedindata = linkedin_data(user_profile["linkedin_link"])
+        githubdata = github_data(user_profile["github_link"])
 
-        person_context = f"""Linkedin info: {data1} 
-                            GitHub Info: {data2},"""
+        person_context = f"""Linkedin info: {linkedindata} 
+                            GitHub Info: {githubdata},"""
 
         job_context = "InstaDeep seeks a Lead Machine Learning Engineer to develop scalable, high-performance ML systems. You will optimize deep learning models, tackle performance bottlenecks, and design distributed infrastructure across GPUs/TPUs. This role involves technical leadership, hands-on coding in Python, C/C++, XLA, Triton, or CUDA, and collaboration with research and product teams. Responsibilities include algorithm optimization, distributed system design, automation of data pipelines, and mentoring engineers. You will drive the long-term roadmap for scalable AI systems while ensuring efficiency and best practices in model training and deployment."
 
@@ -66,10 +66,12 @@ class hr_agent():
         self.router_builder.add_node("llm_call_router", self.llm_call_router)
         self.router_builder.add_node("text_to_speech", self.text_to_speech)
         self.router_builder.add_node("clean_person_context", self.clean_person_context)
+        self.router_builder.add_node("clean_job_context", self.clean_job_context)
 
         # Add edges to connect nodes
-        self.router_builder.add_edge(START, "llm_call_router")
-        self.router_builder.add_edge("clean_person_context", "llm_call_router")
+        self.router_builder.add_edge(START, "clean_person_context")
+        self.router_builder.add_edge("clean_person_context", "clean_job_context")
+        self.router_builder.add_edge("clean_job_context", "llm_call_router")
 
         self.router_builder.add_conditional_edges(
             "llm_call_router",
@@ -149,11 +151,23 @@ class hr_agent():
         prompt = f"""
             This is messy personal information from the user:
             {state["person_context"]}
-            Clean this data to a paragraph within 500 words.
+            Clean this data to a paragraph within 300 words.
             No greetings, introductions, or unnecessary text.
         """
         result = llm.invoke(prompt)
         return {"person_context": result.content}
+
+    def clean_job_context(self, state: State):
+        prompt = f"""
+                    This is messy job description information from a website:
+                    {state["job_context"]}
+                    If the content is None, return None as well. If the content is not None:
+                    There is only one job listed on the website, find the job and it's description first. 
+                    Clean the description to a paragraph within 300 words.
+                    No greetings, introductions, or unnecessary text.
+                """
+        result = llm.invoke(prompt)
+        return {"job_context": result.content}
 
     def generate_CV(self, state: State):
         """Write a CV"""
@@ -209,12 +223,10 @@ class hr_agent():
 
 
 if __name__ == "__main__":
-    person_context = linkedin_data("https://www.linkedin.com/in/yingliu-data/")
-    agent = hr_agent(
-        job_context="InstaDeep seeks a Lead Machine Learning Engineer to develop scalable, high-performance ML systems. You will optimize deep learning models, tackle performance bottlenecks, and design distributed infrastructure across GPUs/TPUs. This role involves technical leadership, hands-on coding in Python, C/C++, XLA, Triton, or CUDA, and collaboration with research and product teams. Responsibilities include algorithm optimization, distributed system design, automation of data pipelines, and mentoring engineers. You will drive the long-term roadmap for scalable AI systems while ensuring efficiency and best practices in model training and deployment.",
-        person_context=person_context,
-        # person_context="John Doe is a data professional with recent activity on LinkedIn. Their recent posts and engagements cover topics such as data analysis, machine learning, and industry trends. They also share insights on data visualization techniques and participate in discussions about the latest developments in data science.",
-        )
+    user_profile = {}
+    user_profile["linkedin_link"] = "https://www.linkedin.com/in/yingliu-data/"
+    user_profile["github_link"] = "sophia172"
+    agent = hr_agent(user_profile=user_profile)
     output = agent("give me a interview")
     # # Generating a unique file name for the output MP3 file
     import uuid

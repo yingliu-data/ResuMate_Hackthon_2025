@@ -7,7 +7,7 @@ def linkedin_data(url):
     data = loader.load()
     return data[0].page_content
 
-def jb_data(url):
+def jd_data(url):
     loader = SeleniumURLLoader(urls=[url])
     data = loader.load()
     return data[0]
@@ -29,11 +29,17 @@ def github_data(username):
     return repo_info
 
 if __name__ == "__main__":
-    result = linkedin_data("https://www.linkedin.com/in/yingliu-data/")
-    print(type(result))
-
+    # result = linkedin_data("https://www.linkedin.com/in/yingliu-data/")
+    #
+    # data1 = linkedin_data("https://www.linkedin.com/in/yingliu-data/")
+    # data2 = github_data("sophia172")
+    #
+    # person_context = f"""Linkedin info: {data1}
+    #                         GitHub Info: {data2}."""
+    # print(person_context)
 
     # result = github_data("sophia172")
     # print(result)
 
-    # result =
+    result = jd_data("https://www.linkedin.com/jobs/view/4119903912/?alternateChannel=search&refId=7aUkPXWfoV3dDHi3LuecSw%3D%3D&trackingId=gIpchlCWGKJD6AefCCK6Aw%3D%3D")
+    print(result)
