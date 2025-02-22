@@ -1,9 +1,37 @@
 
+[Hackathon information](https://docs.google.com/document/d/17mPGjBrvLAzXP9vjT17q2E8ZYQEH2o-TeZiqDNuaiJk/edit?tab=t.0)
 
 # Judge
-**PostHog**:  Web App click rate analysis \\
-**Lovable** and **Vercel**:  Web App create. \\
-**Elevenlab**: Text to Audio \\
+**PostHog**:  Web App click rate analysis 
+
+**Lovable** and **Vercel**:  Web App create. 
+
+**Elevenlab**: Text to Audio 
+
+
+
+# Techniques to use
+1. Lovable
+2. ElevenLab Conversational AI
+
+# Submission Checklist:
+**_Deadline: 11:30 am, Sunday_**
+- [ ] Project Title
+- [ ] Short (short pitch) and Long Descriptions
+- [ ] Technology and Category Tags
+- [ ] Video (max 2 minutes)
+- [ ] Slides (no video added)
+  - [ ] One page: Title
+  - [ ] One page: Problem
+  - [ ] One page: Solution
+  - [ ] One page: technical details
+  - [ ] One page: long-term success, scalability, and societal impact
+  - [ ] One page: Unique Value Proposition, competitor analysis
+- [ ] Team information: List all members with roles/contributions
+- [ ] screenshots or diagrams
+- [ ] GitHub Repository
+- [ ] Compliance: Acknowledge adherence to hackathon rules and deadlines.
+- [submission link](https://elevenlabs-worldwide-hackathon.devpost.com)
 
 
 # Brain Storming (1h)
@@ -44,13 +72,4 @@
 7. **Talk About Future Prospects:** Share scalability and impact potentials.
 8. **Brevity is Key:** Keep slides succinct; limit to 2-3 sentences each.
 
-# Submission Checklist:
 
-- [ ] Project Title
-- [ ] Short and Long Descriptions
-- [ ] Technology and Category Tags
-- [ ] Cover Image
-- [ ] Video Presentation
-- [ ] Slide Presentation
-- [ ] GitHub Repository
-- [ ] Application URL
