@@ -22,3 +22,6 @@ requests
 PyGithub
 PyMuPDF
 pdfplumber
+langchain_community
+selenium
+unstructured

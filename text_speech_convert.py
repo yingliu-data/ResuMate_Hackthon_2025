@@ -1,5 +1,4 @@
 import os
-
 from elevenlabs.client import ElevenLabs
 from elevenlabs import play
 from groq import Groq
@@ -21,6 +20,13 @@ def text2speech(text):
                         model_id="eleven_multilingual_v2",
                         output_format="mp3_44100_128",
                     )
+    # # Generating a unique file name for the output MP3 file
+    # save_file_path = f"{uuid.uuid4()}.mp3"
+    # # Writing the audio to a file
+    # with open(save_file_path, "wb") as f:
+    #     for chunk in audio:
+    #         if chunk:
+    #             f.write(chunk)
     return audio
 
 def speech2text(audio):
@@ -41,4 +47,8 @@ def speech2text(audio):
 
 if __name__ == "__main__":
     audio = text2speech("Hello here is eleven lab")
-    play(audio)
+    print(audio)
+    # play(audio)
+    # result = speech2text("20250222_211044_recording.webm")
+
+

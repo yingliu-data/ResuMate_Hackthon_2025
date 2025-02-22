@@ -11,7 +11,8 @@ from pydantic import BaseModel, Field
 from langgraph.graph import StateGraph, START, END
 from typing_extensions import TypedDict
 from generate_questions import InterviewBot
-
+from text_speech_convert import text2speech
+from data_scraper import linkedin_data
 
 if not os.environ.get("GROQ_API_KEY"):
   os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
@@ -56,9 +57,13 @@ class hr_agent():
         self.router_builder.add_node("Strike_Interview", self.Strike_Interview)
         self.router_builder.add_node("generate_CV", self.generate_CV)
         self.router_builder.add_node("llm_call_router", self.llm_call_router)
+        self.router_builder.add_node("text_to_speech", self.text_to_speech)
+        self.router_builder.add_node("clean_person_context", self.clean_person_context)
 
         # Add edges to connect nodes
         self.router_builder.add_edge(START, "llm_call_router")
+        self.router_builder.add_edge("clean_person_context", "llm_call_router")
+
         self.router_builder.add_conditional_edges(
             "llm_call_router",
             self.route_decision,
@@ -69,7 +74,7 @@ class hr_agent():
             },
         )
         self.router_builder.add_edge("generate_CoverLetter", END)
-        self.router_builder.add_edge("Strike_Interview", END)
+        self.router_builder.add_edge("Strike_Interview", "text_to_speech")
         self.router_builder.add_edge("generate_CV", END)
 
         # Compile workflow
@@ -82,8 +87,6 @@ class hr_agent():
             "person_context": self.person_context
         })
         return state["output"]
-
-
 
         # Nodes
     def generate_CoverLetter(self, state: State):
@@ -130,6 +133,20 @@ class hr_agent():
         """Write a Interview question"""
         _, bot_word = self.interviewBot.generate_interview_questions()
         return {"output": bot_word}
+
+    def text_to_speech(self, state: State):
+        audio = text2speech(state["output"])
+        return {"output": audio}
+
+    def clean_person_context(self, state: State):
+        prompt = f"""
+            This is messy personal information from the user:
+            {state["person_context"]}
+            Clean this data to a paragraph within 500 words.
+            No greetings, introductions, or unnecessary text.
+        """
+        result = llm.invoke(prompt)
+        return {"person_context": result.content}
 
     def generate_CV(self, state: State):
         """Write a CV"""
@@ -185,9 +202,18 @@ class hr_agent():
 
 
 if __name__ == "__main__":
+    person_context = linkedin_data("https://www.linkedin.com/in/yingliu-data/")
     agent = hr_agent(
         job_context="InstaDeep seeks a Lead Machine Learning Engineer to develop scalable, high-performance ML systems. You will optimize deep learning models, tackle performance bottlenecks, and design distributed infrastructure across GPUs/TPUs. This role involves technical leadership, hands-on coding in Python, C/C++, XLA, Triton, or CUDA, and collaboration with research and product teams. Responsibilities include algorithm optimization, distributed system design, automation of data pipelines, and mentoring engineers. You will drive the long-term roadmap for scalable AI systems while ensuring efficiency and best practices in model training and deployment.",
-        person_context="John Doe is a data professional with recent activity on LinkedIn. Their recent posts and engagements cover topics such as data analysis, machine learning, and industry trends. They also share insights on data visualization techniques and participate in discussions about the latest developments in data science.",
+        person_context=person_context,
+        # person_context="John Doe is a data professional with recent activity on LinkedIn. Their recent posts and engagements cover topics such as data analysis, machine learning, and industry trends. They also share insights on data visualization techniques and participate in discussions about the latest developments in data science.",
         )
     output = agent("give me a interview")
-    print(output)
+    # # Generating a unique file name for the output MP3 file
+    import uuid
+    save_file_path = f"{uuid.uuid4()}.mp3"
+    # Writing the audio to a file
+    with open(save_file_path, "wb") as f:
+        for chunk in output:
+            if chunk:
+                f.write(chunk)
