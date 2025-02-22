@@ -5,6 +5,8 @@ from typing import Optional, Dict
 import uvicorn
 from datetime import datetime
 import os
+import tempfile
+import speech_recognition as sr
 
 # Initialize FastAPI app
 app = FastAPI(title="User Profile API")
@@ -24,7 +26,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 class ChatRequest(BaseModel):
     message: str
 
-@app.post("/chat")
+@app.post("/chat/")
 async def chat_endpoint(request: ChatRequest) -> Dict[str, str]:
     try:
         user_message = request.message.strip()
@@ -37,6 +39,29 @@ async def chat_endpoint(request: ChatRequest) -> Dict[str, str]:
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
+
+
+@app.post("/chat/audio/")
+async def process_audio(audio: UploadFile = File(...)):
+    """
+    Receives an uploaded audio file, transcribes it, and returns the text.
+    """
+    try:
+        # Generate timestamped filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        file_extension = os.path.splitext(audio.filename)[-1] or ".webm"
+        filename = f"{timestamp}_recording{file_extension}"
+        file_path = os.path.join(UPLOAD_DIR, filename)
+
+        # Save the file
+        with open(file_path, "wb") as buffer:
+            buffer.write(await audio.read())
+
+        return {"message": "Audio saved successfully", "file_path": file_path}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing audio: {str(e)}")
+
 
 @app.get("/")
 async def root():
@@ -90,9 +115,6 @@ async def user_profile(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post('/chat/')
-async def conversation():
-    print("called")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

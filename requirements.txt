@@ -1,5 +1,11 @@
-elevenlabs
-python-dotenv
+elevenlabs~=1.51.0
+python-dotenv~=1.0.1
 asyncio
-groq
-openai
+groq~=0.18.0
+openai~=1.63.2
+
+uvicorn~=0.34.0
+SpeechRecognition~=3.14.1
+fastapi~=0.115.8
+pydantic~=2.10.6
+typing_extensions~=4.12.2
