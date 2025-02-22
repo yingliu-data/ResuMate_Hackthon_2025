@@ -1,4 +1,9 @@
-elevenlabs
-python-dotenv
+elevenlabs~=1.51.0
+python-dotenv~=1.0.1
 asyncio
-groq
+groq~=0.18.0
+
+uvicorn~=0.34.0
+fastapi~=0.115.8
+pydantic~=2.10.6
+starlette~=0.27.0

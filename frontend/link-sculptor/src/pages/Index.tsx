@@ -31,18 +31,18 @@ const Index = () => {
 
     try {
       const formData = new FormData();
-      formData.append('githubLink', githubLink);
-      formData.append('linkedinLink', linkedinLink);
+      formData.append('github_link', githubLink);
+      formData.append('linkedin_link', linkedinLink);
       if (resume) {
         formData.append('resume', resume);
       }
-      formData.append('jobDescription', jobDescription);
+      formData.append('job_description', jobDescription);
 
-      const response = await fetch('http://localhost:3001/upload', {
+      const response = await fetch('http://localhost:8000/user-profile/', {
         method: 'POST',
         body: formData,
       });
-
+        console.log(response)
       if (!response.ok) {
         throw new Error('Failed to send data to server');
       }
@@ -64,7 +64,7 @@ const Index = () => {
         <h1 className="text-2xl font-semibold text-center mb-6">
           Resume Tailor
         </h1>
-        
+
         <div className="space-y-6">
           <SocialLinkInput
             label="GitHub Profile"
@@ -72,7 +72,7 @@ const Index = () => {
             onChange={setGithubLink}
             placeholder="https://github.com/username"
           />
-          
+
           <SocialLinkInput
             label="LinkedIn Profile"
             value={linkedinLink}
