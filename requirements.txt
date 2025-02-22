@@ -5,3 +5,9 @@ langchain
 pydantic
 langgraph
 openai
+Flask
+python-dotenv
+requests
+PyGithub
+PyMuPDF
+pdfplumber
