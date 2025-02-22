@@ -26,3 +26,4 @@ langchain_community
 selenium
 unstructured
 PyGithub
+python-multipart

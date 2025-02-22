@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException, Form, UploadFile, File
+from aiohttp.web_fileresponse import content_type
+from fastapi import FastAPI, HTTPException, Form, UploadFile, File, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, Dict
@@ -57,7 +58,16 @@ async def process_audio(audio: UploadFile = File(...)):
         with open(file_path, "wb") as buffer:
             buffer.write(await audio.read())
 
-        return {"message": "Audio saved successfully", "file_path": file_path}
+        # Read the saved file to return it as response
+        with open(file_path, "rb") as audio_file:
+            audio_data = audio_file.read()
+
+        # return {"message": "Audio saved successfully",
+        #         "file_path": file_path,
+        #         "audioResponse":audio,
+        #         "content-type":"audio/webm"}
+
+        return Response(content=audio_data, media_type="audio/mpeg")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing audio: {str(e)}")
