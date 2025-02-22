@@ -1,9 +1,9 @@
 
 
 # Judge
-**PostHog**:  Web App click rate analysis
-**Lovable** and **Vercel**:  Web App create. 
-**Elevenlab**: Text to Audio 
+**PostHog**:  Web App click rate analysis \\
+**Lovable** and **Vercel**:  Web App create. \\
+**Elevenlab**: Text to Audio \\
 
 
 # Brain Storming (1h)
