@@ -83,30 +83,21 @@ async def user_profile(
         github_link: str = Form(...),
         linkedin_link: str = Form(...),
         resume: Optional[UploadFile] = File(None),
-        job_description: Optional[UploadFile] = File(None)
+        job_description: str = Form(...)
+
 ):
     try:
-        # Create user_profile record
+        # Create user profile record
         user_profile = {
-            "timestamp": datetime.now().isoformat(),
             "github_link": github_link,
             "linkedin_link": linkedin_link,
-            "resume_path": None,
-            "job_description_path": None
+            "job_description": job_description,  # Store text directly
+            "resume_path": None
         }
-        # Handle job description upload (required)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        jd_filename = f"{timestamp}_jd_{job_description.filename}"
-        jd_filepath = os.path.join(UPLOAD_DIR, jd_filename)
-
-        with open(jd_filepath, "wb") as buffer:
-            content = await job_description.read()
-            buffer.write(content)
-
-        user_profile["job_description_path"] = jd_filepath
 
         # Handle resume upload if provided
         if resume:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             resume_filename = f"{timestamp}_resume_{resume.filename}"
             resume_filepath = os.path.join(UPLOAD_DIR, resume_filename)
 
@@ -117,8 +108,8 @@ async def user_profile(
             user_profile["resume_path"] = resume_filepath
 
         return {
-            "message": "Application submitted successfully",
-            "job_description_path": user_profile["job_description_path"],
+            "message": "User profile created successfully",
+            "job_description": job_description,  # Return the text instead of a file path
             "resume_path": user_profile["resume_path"]
         }
 

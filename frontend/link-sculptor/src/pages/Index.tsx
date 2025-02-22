@@ -12,7 +12,7 @@ const Index = () => {
   const [githubUsername, setGithubUsername] = useState("");
   const [linkedinLink, setLinkedinLink] = useState("");
   const [resume, setResume] = useState<File | null>(null);
-  const [jobDescription, setJobDescription] = useState<File | null>(null);
+  const [jobDescriptionLink, setJobDescriptionLink] = useState("");
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,8 +22,8 @@ const Index = () => {
       return;
     }
 
-    if (!jobDescription) {
-      toast.error("Please upload a job description");
+    if (!jobDescriptionLink) {
+      toast.error("Please provide a job description link");
       return;
     }
 
@@ -31,12 +31,12 @@ const Index = () => {
 
     try {
       const formData = new FormData();
-      formData.append('githubLink', githubUsername); // Changed: now sending just the username
-      formData.append('linkedinLink', linkedinLink);
+      formData.append('github_link', githubUsername);
+      formData.append('linkedin_link', linkedinLink);
+      formData.append('job_description', jobDescriptionLink);
       if (resume) {
         formData.append('resume', resume);
       }
-      formData.append('jobDescription', jobDescription);
 
       const response = await fetch('http://localhost:8000/user-profile', {
         method: 'POST',
@@ -93,20 +93,12 @@ const Index = () => {
             />
           </div>
 
-          <div className="space-y-2">
-            <p className="text-sm font-medium mb-2">Job Description</p>
-            <FileUpload
-              onFileSelect={(file) => {
-                setJobDescription(file);
-                toast.success("Job description uploaded successfully");
-              }}
-              accept={{
-                "application/pdf": [".pdf"],
-                "text/plain": [".txt"],
-              }}
-              label="Upload the job description (PDF or TXT)"
-            />
-          </div>
+          <SocialLinkInput
+            label="Job Description Link"
+            value={jobDescriptionLink}
+            onChange={setJobDescriptionLink}
+            placeholder="https://example.com/job-posting"
+          />
 
           <Button
             onClick={handleSubmit}
