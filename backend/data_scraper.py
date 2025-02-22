@@ -10,7 +10,7 @@ def linkedin_data(url):
 def jd_data(url):
     loader = SeleniumURLLoader(urls=[url])
     data = loader.load()
-    return data[0]
+    return data[0].page_content
 
 
 

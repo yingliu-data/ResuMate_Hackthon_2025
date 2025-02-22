@@ -1,6 +1,9 @@
 
 import os
 from dotenv import load_dotenv
+
+from backend.data_scraper import jd_data
+
 load_dotenv()
 
 from langchain.chat_models import init_chat_model
@@ -45,12 +48,12 @@ class hr_agent():
     def __init__(self, user_profile=None):
         linkedindata = linkedin_data(user_profile["linkedin_link"])
         githubdata = github_data(user_profile["github_link"])
+        jobdata = jd_data(user_profile["job_description"])
 
         person_context = self.clean_person_context(f"""Linkedin info: {linkedindata} 
                                                         GitHub Info: {githubdata}.""")
 
-        job_context = self.clean_job_context("InstaDeep seeks a Lead Machine Learning Engineer to develop scalable, high-performance ML systems. You will optimize deep learning models, tackle performance bottlenecks, and design distributed infrastructure across GPUs/TPUs. This role involves technical leadership, hands-on coding in Python, C/C++, XLA, Triton, or CUDA, and collaboration with research and product teams. Responsibilities include algorithm optimization, distributed system design, automation of data pipelines, and mentoring engineers. You will drive the long-term roadmap for scalable AI systems while ensuring efficiency and best practices in model training and deployment."
-                                             )
+        job_context = self.clean_job_context(jobdata)
         self.interviewBot = InterviewBot(job_profile=job_context,
                                     user_info=person_context)
         self.job_context = job_context
