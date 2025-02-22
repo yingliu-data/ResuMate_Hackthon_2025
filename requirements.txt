@@ -25,3 +25,4 @@ pdfplumber
 langchain_community
 selenium
 unstructured
+PyGithub
