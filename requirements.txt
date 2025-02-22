@@ -9,3 +9,16 @@ SpeechRecognition~=3.14.1
 fastapi~=0.115.8
 pydantic~=2.10.6
 typing_extensions~=4.12.2
+elevenlabs
+python-dotenv
+groq
+langchain
+pydantic
+langgraph
+openai
+Flask
+python-dotenv
+requests
+PyGithub
+PyMuPDF
+pdfplumber
