@@ -1,16 +1,17 @@
 import os
 
-from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from elevenlabs import play
 from groq import Groq
+
+from dotenv import load_dotenv
 load_dotenv()
 
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 lab_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 
 def text2speech(text):
