@@ -169,3 +169,6 @@ cython_debug/
 test.py
 # PyPI configuration file
 .pypirc
+
+*/node_modules
+*/link-sculptor/.git
