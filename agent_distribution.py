@@ -12,7 +12,7 @@ from langgraph.graph import StateGraph, START, END
 from typing_extensions import TypedDict
 from generate_questions import InterviewBot
 from text_speech_convert import text2speech
-from data_scraper import linkedin_data
+from data_scraper import linkedin_data, github_data
 
 if not os.environ.get("GROQ_API_KEY"):
   os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
@@ -42,7 +42,14 @@ class State(TypedDict):
     user_id: int
 
 class hr_agent():
-    def __init__(self, person_context=None, job_context=None):
+    def __init__(self, user_profile=None):
+        data1  = linkedin_data(user_profile["linkedin_link"])
+        data2 = github_data(user_profile["github_link"])
+
+        person_context = f"""Linkedin info: {data1} 
+                            GitHub Info: {data2},"""
+
+        job_context = "InstaDeep seeks a Lead Machine Learning Engineer to develop scalable, high-performance ML systems. You will optimize deep learning models, tackle performance bottlenecks, and design distributed infrastructure across GPUs/TPUs. This role involves technical leadership, hands-on coding in Python, C/C++, XLA, Triton, or CUDA, and collaboration with research and product teams. Responsibilities include algorithm optimization, distributed system design, automation of data pipelines, and mentoring engineers. You will drive the long-term roadmap for scalable AI systems while ensuring efficiency and best practices in model training and deployment."
 
         self.interviewBot = InterviewBot(job_profile=job_context,
                                     user_info=person_context)
