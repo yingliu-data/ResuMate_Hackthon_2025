@@ -1,7 +1,7 @@
 elevenlabs
 python-dotenv
-asyncio
 groq
-Flask
-requests
-PyGithub
+langchain
+pydantic
+langgraph
+openai
