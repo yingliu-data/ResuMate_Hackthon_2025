@@ -1,9 +1,14 @@
 
+[Hackathon information](https://docs.google.com/document/d/17mPGjBrvLAzXP9vjT17q2E8ZYQEH2o-TeZiqDNuaiJk/edit?tab=t.0)
 
 # Judge
-**PostHog**:  Web App click rate analysis \\
-**Lovable** and **Vercel**:  Web App create. \\
-**Elevenlab**: Text to Audio \\
+**PostHog**:  Web App click rate analysis 
+
+**Lovable** and **Vercel**:  Web App create. 
+
+**Elevenlab**: Text to Audio 
+
+
 
 # Techniques to use
 1. Lovable
