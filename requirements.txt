@@ -2,3 +2,4 @@ elevenlabs
 python-dotenv
 asyncio
 groq
+openai
