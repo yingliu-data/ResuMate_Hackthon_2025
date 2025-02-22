@@ -1,25 +1,35 @@
 
 import React, { useState } from 'react';
-import { MessageSquare, X } from 'lucide-react';
+import { MessageSquare, X, Mic, MicOff, Send } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { toast } from 'sonner';
+import { useReactMediaRecorder } from 'react-media-recorder';
 
 const ChatBox = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<{ text: string; sender: 'user' | 'bot' }[]>([]);
+  const [messages, setMessages] = useState<{ text: string; sender: 'user' | 'bot'; type: 'text' | 'audio' }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = async () => {
+  const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({
+    audio: true,
+    onStop: async (blobUrl, blob) => {
+      if (blob) {
+        await handleAudioSend(blob);
+      }
+    }
+  });
+
+  const handleTextSend = async () => {
     if (!message.trim()) return;
 
     setIsLoading(true);
-    const userMessage = { text: message, sender: 'user' as const };
+    const userMessage = { text: message, sender: 'user' as const, type: 'text' as const };
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      const response = await fetch('http://localhost:3001/chat', {
+      const response = await fetch('http://localhost:8000/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,11 +42,40 @@ const ChatBox = () => {
       }
 
       const data = await response.json();
-      setMessages(prev => [...prev, { text: data.message, sender: 'bot' }]);
+      setMessages(prev => [...prev, { text: data.message, sender: 'bot', type: 'text' }]);
       setMessage('');
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to send message');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAudioSend = async (audioBlob: Blob) => {
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'recording.wav');
+
+    try {
+      const response = await fetch('http://localhost:8000/chat/audio', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send audio message');
+      }
+
+      const data = await response.json();
+      setMessages(prev => [
+        ...prev,
+        { text: '🎤 Audio message sent', sender: 'user', type: 'audio' },
+        { text: data.message, sender: 'bot', type: 'text' }
+      ]);
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to send audio message');
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +103,7 @@ const ChatBox = () => {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          
+
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((msg, index) => (
               <div
@@ -96,16 +135,34 @@ const ChatBox = () => {
                 className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
-                    handleSend();
+                    handleTextSend();
                   }
                 }}
               />
-              <Button 
-                onClick={handleSend}
-                disabled={isLoading}
-                className="min-w-[80px]"
+              <Button
+                onClick={handleTextSend}
+                disabled={isLoading || status === 'recording'}
+                className="min-w-[40px]"
               >
-                {isLoading ? 'Sending...' : 'Send'}
+                <Send className="h-4 w-4" />
+              </Button>
+              <Button
+                onClick={() => {
+                  if (status === 'recording') {
+                    stopRecording();
+                  } else {
+                    startRecording();
+                  }
+                }}
+                disabled={isLoading}
+                variant={status === 'recording' ? 'destructive' : 'default'}
+                className="min-w-[40px]"
+              >
+                {status === 'recording' ? (
+                  <MicOff className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -116,3 +173,4 @@ const ChatBox = () => {
 };
 
 export default ChatBox;
+

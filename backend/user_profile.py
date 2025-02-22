@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Form, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional, List
+from pydantic import BaseModel
+from typing import Optional, Dict
 import uvicorn
 from datetime import datetime
 import os
@@ -18,6 +19,24 @@ app.add_middleware(
 # Create storage directory if it doesn't exist
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+@app.post("/chat")
+async def chat_endpoint(request: ChatRequest) -> Dict[str, str]:
+    try:
+        user_message = request.message.strip()
+        if not user_message:
+            raise HTTPException(status_code=400, detail="Message cannot be empty")
+
+        # Example bot response (Replace with actual logic)
+        bot_response = f"🤖 Echo: {user_message}"
+        return {"message": bot_response}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
 
 @app.get("/")
 async def root():
@@ -71,9 +90,9 @@ async def user_profile(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post('/conversation/')
+@app.post('/chat/')
 async def conversation():
-    pass
+    print("called")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
