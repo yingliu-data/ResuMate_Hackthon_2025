@@ -1,9 +1,8 @@
 import os
 from openai import OpenAI
-from dotenv import load_dotenv
-from typing import NamedTuple
 import uuid
 
+from dotenv import load_dotenv
 load_dotenv()
 # Set your OpenAI API key
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))

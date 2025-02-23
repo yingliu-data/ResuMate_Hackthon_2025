@@ -1,6 +1,5 @@
 import os
 from elevenlabs.client import ElevenLabs
-from elevenlabs import play
 from groq import Groq
 
 from dotenv import load_dotenv
@@ -16,16 +15,11 @@ groq_client = Groq(api_key=GROQ_API_KEY)
 def text2speech(text):
     audio = lab_client.text_to_speech.convert(
                         text=text,
-                        voice_id="JBFqnCBsd6RMkjVDRZzb",
+                        voice_id="onwK4e9ZLuTAKqWW03F9",
                         model_id="eleven_multilingual_v2",
                         output_format="mp3_44100_128",
                     )
-    # # Generating a unique file name for the output MP3 file
-    # # Writing the audio to a file
-    # with open(save_file_path, "wb") as f:
-    #     for chunk in audio:
-    #         if chunk:
-    #             f.write(chunk)
+
     return audio
 
 def speech2text(audio):

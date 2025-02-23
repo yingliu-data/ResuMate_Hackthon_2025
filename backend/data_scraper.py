@@ -1,5 +1,3 @@
-import os
-
 from langchain_community.document_loaders import SeleniumURLLoader
 from github import Github
 from langchain_community.document_loaders import PyPDFLoader
@@ -39,19 +37,18 @@ def resume_data(file_path):
 
 def github_data(username):
     try:
-        return "some infor about github"
-        # client = Github()
+        client = Github()
 
-        # user = client.get_user(username)
-        # repos = user.get_repos()
-        #
-        # repo_info = ""
-        # for repo in repos:
-        #     repo_info += f"[name: {repo.name}. "
-        #     repo_info += f"language: {repo.language}. "
-        #     repo_info += f"stars: {repo.stargazers_count}. "
-        #     repo_info += f"forks: {repo.forks_count}. ]"
-        # return repo_info
+        user = client.get_user(username)
+        repos = user.get_repos()
+
+        repo_info = ""
+        for repo in repos:
+            repo_info += f"[name: {repo.name}. "
+            repo_info += f"language: {repo.language}. "
+            repo_info += f"stars: {repo.stargazers_count}. "
+            repo_info += f"forks: {repo.forks_count}. ]"
+        return repo_info
     except:
         return ""
 

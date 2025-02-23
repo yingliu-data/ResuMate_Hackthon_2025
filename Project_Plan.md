@@ -16,21 +16,21 @@
 
 # Submission Checklist:
 **_Deadline: 11:30 am, Sunday_**
-- [ ] Project Title
-- [ ] Short (short pitch) and Long Descriptions
-- [ ] Technology and Category Tags
-- [ ] Video (max 2 minutes)
-- [ ] Slides (no video added)
-  - [ ] One page: Title
-  - [ ] One page: Problem
-  - [ ] One page: Solution
-  - [ ] One page: technical details
-  - [ ] One page: long-term success, scalability, and societal impact
-  - [ ] One page: Unique Value Proposition, competitor analysis
-- [ ] Team information: List all members with roles/contributions
-- [ ] screenshots or diagrams
-- [ ] GitHub Repository
-- [ ] Compliance: Acknowledge adherence to hackathon rules and deadlines.
+- [x] Project Title
+- [x] Short (short pitch) and Long Descriptions
+- [x] Technology and Category Tags
+- [x] Video (max 2 minutes)
+- [x] Slides (no video added)
+  - [x] One page: Title
+  - [x] One page: Problem
+  - [x] One page: Solution
+  - [x] One page: technical details
+  - [x] One page: long-term success, scalability, and societal impact
+  - [x] One page: Unique Value Proposition, competitor analysis
+- [x] Team information: List all members with roles/contributions
+- [x] screenshots or diagrams
+- [x] GitHub Repository
+- [x] Compliance: Acknowledge adherence to hackathon rules and deadlines.
 - [submission link](https://elevenlabs-worldwide-hackathon.devpost.com)
 
 

@@ -14,6 +14,7 @@ from typing_extensions import TypedDict
 from generate_questions import InterviewBot
 from text_speech_convert import text2speech, speech2text
 from data_scraper import linkedin_data, github_data, resume_data, jd_data
+import validators
 
 if not os.environ.get("GROQ_API_KEY"):
   os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
@@ -169,7 +170,7 @@ class HrAgent():
             Clean this data to a paragraph within 200 words.
             No greetings, introductions, or unnecessary text.
         """
-        result = llm.invoke(prompt, max_tokens=3000)
+        result = llm.invoke(prompt, max_tokens=2000)
         return result.content
 
     def clean_job_context(self, job_context):
@@ -181,7 +182,7 @@ class HrAgent():
                     Clean the description to a paragraph within 200 words.
                     No greetings, introductions, or unnecessary text.
                 """
-        result = llm.invoke(prompt, max_tokens=3000)
+        result = llm.invoke(prompt, max_tokens=2000)
         return result.content
 
     def generate_CV(self, state: State):
@@ -205,7 +206,7 @@ class HrAgent():
     
                 Format it in a clear and concise markdown structure. No greetings, introductions, or unnecessary text.
                 """
-        result = llm.invoke(prompt, max_tokens=3000)
+        result = llm.invoke(prompt, max_tokens=2000)
         return {"output": result.content, "flag": "CV"}
 
     def llm_call_router(self, state: State):
