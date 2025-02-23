@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 from langgraph.graph import StateGraph, START, END
 from typing_extensions import TypedDict
 from generate_questions import InterviewBot
-from backend.text_speech_convert import text2speech
+from backend.text_speech_convert import text2speech, speech2text
 from data_scraper import linkedin_data, github_data, resume_data, jd_data
 
 if not os.environ.get("GROQ_API_KEY"):
@@ -87,7 +87,9 @@ class HrAgent():
         # Compile workflow
         self.router_workflow = self.router_builder.compile()
 
-    def __call__(self, new_messgae: str):
+    def __call__(self, new_messgae):
+        if new_messgae and os.path.exists(new_messgae):
+            new_messgae = speech2text(new_messgae)
         state = self.router_workflow.invoke({
             "input": new_messgae,
             "job_context": self.job_context,
@@ -131,7 +133,7 @@ class HrAgent():
                     6. Signature
                     Sign off with Sincerely or Best regards, followed by your name.
     
-                    Format it in a clear and concise structure. No greetings, introductions, or unnecessary text.
+                    Format it in a clear and concise markdown structure. No greetings, introductions, or unnecessary text.
                     """
         result = llm.invoke(prompt)
         return {"output": result.content}
@@ -186,7 +188,7 @@ class HrAgent():
                 - Skills
                 - Certifications (if applicable)
     
-                Format it in a clear and concise structure. No greetings, introductions, or unnecessary text.
+                Format it in a clear and concise markdown structure. No greetings, introductions, or unnecessary text.
                 """
         result = llm.invoke(prompt)
         return {"output": result.content}

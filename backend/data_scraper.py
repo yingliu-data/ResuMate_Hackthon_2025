@@ -1,4 +1,4 @@
-import os.path
+import os
 
 from langchain_community.document_loaders import SeleniumURLLoader
 from github import Github
@@ -17,7 +17,7 @@ def jd_data(url):
     return " ".join([page.page_content for page in data])
 
 def resume_data(file_path):
-    if os.path.exists(file_path):
+    if file_path and os.path.exists(file_path):
         loader = PyPDFLoader(file_path)
         pages = ""
         for i, page in enumerate(loader.lazy_load()):
