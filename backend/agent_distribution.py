@@ -224,6 +224,8 @@ if __name__ == "__main__":
     user_profile = {}
     user_profile["linkedin_link"] = "https://www.linkedin.com/in/yingliu-data/"
     user_profile["github_link"] = "sophia172"
+    user_profile["job_description"] = "software engineer"
+    user_profile["resume_path"] = None
     agent = HrAgent(user_profile=user_profile)
     output = agent("give me a interview")
     # # Generating a unique file name for the output MP3 file

@@ -1,3 +1,5 @@
+import os.path
+
 from langchain_community.document_loaders import SeleniumURLLoader
 from github import Github
 from langchain_community.document_loaders import PyPDFLoader
@@ -6,20 +8,23 @@ from langchain_community.document_loaders import PyPDFLoader
 def linkedin_data(url):
     loader = SeleniumURLLoader(urls=[url])
     data = loader.load()
-    return data[0].page_content
+
+    return " ".join([page.page_content for page in data])
 
 def jd_data(url):
     loader = SeleniumURLLoader(urls=[url])
     data = loader.load()
-    return data[0].page_content
+    return " ".join([page.page_content for page in data])
 
 def resume_data(file_path):
-    loader = PyPDFLoader(file_path)
-    pages = ""
-    for i, page in enumerate(loader.lazy_load()):
-        pages += f"page {i}: {page.page_content}"
-    return pages
-
+    if os.path.exists(file_path):
+        loader = PyPDFLoader(file_path)
+        pages = ""
+        for i, page in enumerate(loader.lazy_load()):
+            pages += f"page {i}: {page.page_content}"
+        return pages
+    else:
+        return ""
 
 def github_data(username):
     client = Github()
