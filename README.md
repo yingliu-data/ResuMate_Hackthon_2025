@@ -48,6 +48,10 @@ Run the **frontend** and **backend** servers in separate terminal windows:
 cd frontend/link-sculptor
 npm run dev
 ```
+If this runs into an issue please run this below line and try again 
+```bash
+rm -rf node_modules package-lock.json
+```
 
 #### Backend  
 ```bash
