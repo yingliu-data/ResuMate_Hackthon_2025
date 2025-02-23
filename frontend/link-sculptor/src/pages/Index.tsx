@@ -28,6 +28,7 @@ const Index = () => {
     }
 
     setIsLoading(true);
+    setResult(""); // Clear previous result
 
     try {
       const formData = new FormData();
@@ -48,11 +49,18 @@ const Index = () => {
       }
 
       const data = await response.json();
-      setResult(data.message || "Data successfully sent to server!");
-      toast.success("Data successfully sent to server!");
+
+      if (data.cv) {
+        setResult(data.cv);
+        toast.success("Your tailored CV has been generated!");
+      } else {
+        setResult("No CV content received from server");
+        toast.error("Failed to generate CV");
+      }
     } catch (error) {
       console.error('Error:', error);
-      toast.error("Failed to send data to server");
+      toast.error("Failed to generate CV");
+      setResult("Error generating CV");
     } finally {
       setIsLoading(false);
     }
@@ -108,7 +116,7 @@ const Index = () => {
             {isLoading ? (
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
-                <span>Processing...</span>
+                <span>Generating CV...</span>
               </div>
             ) : (
               "Generate Tailored Resume"

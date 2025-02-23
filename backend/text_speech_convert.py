@@ -21,7 +21,6 @@ def text2speech(text):
                         output_format="mp3_44100_128",
                     )
     # # Generating a unique file name for the output MP3 file
-    # save_file_path = f"{uuid.uuid4()}.mp3"
     # # Writing the audio to a file
     # with open(save_file_path, "wb") as f:
     #     for chunk in audio:

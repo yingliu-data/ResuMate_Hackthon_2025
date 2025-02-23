@@ -2,8 +2,6 @@
 import os
 from dotenv import load_dotenv
 
-from backend.data_scraper import jd_data
-
 load_dotenv()
 
 from langchain.chat_models import init_chat_model
@@ -14,8 +12,8 @@ from pydantic import BaseModel, Field
 from langgraph.graph import StateGraph, START, END
 from typing_extensions import TypedDict
 from generate_questions import InterviewBot
-from text_speech_convert import text2speech
-from data_scraper import linkedin_data, github_data, pdf_data
+from backend.text_speech_convert import text2speech
+from data_scraper import linkedin_data, github_data, resume_data, jd_data
 
 if not os.environ.get("GROQ_API_KEY"):
   os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
@@ -44,12 +42,12 @@ class State(TypedDict):
     job_context: str
     user_id: int
 
-class hr_agent():
+class HrAgent():
     def __init__(self, user_profile=None):
         linkedindata = linkedin_data(user_profile["linkedin_link"])
         githubdata = github_data(user_profile["github_link"])
         jobdata = jd_data(user_profile["job_description"])
-        cvdata = pdf_data(user_profile["resume_path"])
+        cvdata = resume_data(user_profile["resume_path"])
         person_context = self.clean_person_context(f"""Linkedin info: {linkedindata} 
                                                         GitHub Info: {githubdata}
                                                         User's CV draft: {cvdata}""")
@@ -64,8 +62,8 @@ class hr_agent():
         self.router_builder = StateGraph(State)
 
         # Add nodes
-        self.router_builder.add_node("generate_CoverLetter", self.generate_CoverLetter)
-        self.router_builder.add_node("Strike_Interview", self.Strike_Interview)
+        self.router_builder.add_node("generate_CoverLetter", self.generate_cover_letter)
+        self.router_builder.add_node("Strike_Interview", self.strike_interview)
         self.router_builder.add_node("generate_CV", self.generate_CV)
         self.router_builder.add_node("llm_call_router", self.llm_call_router)
         self.router_builder.add_node("text_to_speech", self.text_to_speech)
@@ -98,7 +96,7 @@ class hr_agent():
         return state["output"]
 
         # Nodes
-    def generate_CoverLetter(self, state: State):
+    def generate_cover_letter(self, state: State):
         """Write a Cover Letter"""
 
         prompt = f"""
@@ -138,8 +136,8 @@ class hr_agent():
         result = llm.invoke(prompt)
         return {"output": result.content}
 
-    def Strike_Interview(self, state: State):
-        """Write a Interview question"""
+    def strike_interview(self, state: State):
+        """Write an Interview question"""
         _, bot_word = self.interviewBot.generate_interview_questions()
         return {"output": bot_word}
 
@@ -226,7 +224,7 @@ if __name__ == "__main__":
     user_profile = {}
     user_profile["linkedin_link"] = "https://www.linkedin.com/in/yingliu-data/"
     user_profile["github_link"] = "sophia172"
-    agent = hr_agent(user_profile=user_profile)
+    agent = HrAgent(user_profile=user_profile)
     output = agent("give me a interview")
     # # Generating a unique file name for the output MP3 file
     import uuid

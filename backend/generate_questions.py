@@ -42,7 +42,7 @@ class InterviewBot():
         system_prompt = f"You are a technical interviewer conducting an interview {interview_context}."
         
         if user_info:
-            system_prompt += f" The candidate reume shared {user_info}."
+            system_prompt += f" The candidate resume shared {user_info}."
         system_prompt += " Ask relevant technical questions and evaluate their responses. Please ask One question at a time and wait for candidate answer"
 
         # Prepare the messages

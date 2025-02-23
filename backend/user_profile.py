@@ -7,7 +7,7 @@ import uvicorn
 from datetime import datetime
 import os
 import tempfile
-import speech_recognition as sr
+# from agent_distribution import HrAgent
 
 # Initialize FastAPI app
 app = FastAPI(title="User Profile API")
@@ -23,6 +23,7 @@ app.add_middleware(
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+hr_agent = None
 
 class ChatRequest(BaseModel):
     message: str
@@ -34,9 +35,15 @@ async def chat_endpoint(request: ChatRequest) -> Dict[str, str]:
         if not user_message:
             raise HTTPException(status_code=400, detail="Message cannot be empty")
 
+        global hr_agent
+        if hr_agent:
+            return_response = hr_agent(user_message)
+        else:
+            return_response = "Please initialise your profile first by providing github username,LinkedIn profile link, and the job description url"
+
         # Example bot response (Replace with actual logic)
-        bot_response = f"🤖 Echo: {user_message}"
-        return {"message": bot_response}
+        # bot_response = f"🤖 Echo: {user_message}"
+        return {"message": return_response}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing message: {str(e)}")
@@ -91,7 +98,7 @@ async def user_profile(
         user_profile = {
             "github_link": github_link,
             "linkedin_link": linkedin_link,
-            "job_description": job_description,  # Store text directly
+            "job_description": job_description,
             "resume_path": None
         }
 
@@ -107,10 +114,14 @@ async def user_profile(
 
             user_profile["resume_path"] = resume_filepath
 
+        # global hr_agent
+        # hr_agent = HrAgent(user_profile=user_profile)
+        # response = hr_agent("Generate CV")
+        # print("response: ", response)
+        cv_response = "John Doe\nSoftware Engineer\n123 Main Street\nCity, State 12345\n\nPROFESSIONAL SUMMARY\n-------------------\nDetail-oriented software engineer with 5 years of experience\n\nWORK EXPERIENCE\n--------------\nSenior Developer | Tech Company\n2020 - Present\n• Led development team\n• Managed projects\n\nEDUCATION\n---------\nBS Computer Science\nState University, 2019"
         return {
-            "message": "User profile created successfully",
-            "job_description": job_description,  # Return the text instead of a file path
-            "resume_path": user_profile["resume_path"]
+            "message": "CV created successfully",
+            "cv": cv_response
         }
 
     except Exception as e:

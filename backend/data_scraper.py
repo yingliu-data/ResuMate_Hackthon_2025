@@ -13,7 +13,7 @@ def jd_data(url):
     data = loader.load()
     return data[0].page_content
 
-def pdf_data(file_path):
+def resume_data(file_path):
     loader = PyPDFLoader(file_path)
     pages = ""
     for i, page in enumerate(loader.lazy_load()):
@@ -51,5 +51,5 @@ if __name__ == "__main__":
     # result = jd_data("https://www.linkedin.com/jobs/view/4119903912/?alternateChannel=search&refId=7aUkPXWfoV3dDHi3LuecSw%3D%3D&trackingId=gIpchlCWGKJD6AefCCK6Aw%3D%3D")
     # print(result)
 
-    result = pdf_data("CV_Ying_Nov24.pdf")
+    result = resume_data("CV_Ying_Nov24.pdf")
     print(result)
