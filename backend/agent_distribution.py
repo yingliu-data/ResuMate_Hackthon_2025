@@ -15,7 +15,7 @@ from langgraph.graph import StateGraph, START, END
 from typing_extensions import TypedDict
 from generate_questions import InterviewBot
 from text_speech_convert import text2speech
-from data_scraper import linkedin_data, github_data
+from data_scraper import linkedin_data, github_data, pdf_data
 
 if not os.environ.get("GROQ_API_KEY"):
   os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
@@ -49,9 +49,10 @@ class hr_agent():
         linkedindata = linkedin_data(user_profile["linkedin_link"])
         githubdata = github_data(user_profile["github_link"])
         jobdata = jd_data(user_profile["job_description"])
-
+        cvdata = pdf_data(user_profile["resume_path"])
         person_context = self.clean_person_context(f"""Linkedin info: {linkedindata} 
-                                                        GitHub Info: {githubdata}.""")
+                                                        GitHub Info: {githubdata}
+                                                        User's CV draft: {cvdata}""")
 
         job_context = self.clean_job_context(jobdata)
         self.interviewBot = InterviewBot(job_profile=job_context,

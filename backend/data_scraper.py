@@ -1,6 +1,7 @@
 from langchain_community.document_loaders import SeleniumURLLoader
 from github import Github
-from collections import defaultdict, Counter
+from langchain_community.document_loaders import PyPDFLoader
+
 
 def linkedin_data(url):
     loader = SeleniumURLLoader(urls=[url])
@@ -12,6 +13,12 @@ def jd_data(url):
     data = loader.load()
     return data[0].page_content
 
+def pdf_data(file_path):
+    loader = PyPDFLoader(file_path)
+    pages = ""
+    for i, page in enumerate(loader.lazy_load()):
+        pages += f"page {i}: {page.page_content}"
+    return pages
 
 
 def github_data(username):
@@ -41,5 +48,8 @@ if __name__ == "__main__":
     # result = github_data("sophia172")
     # print(result)
 
-    result = jd_data("https://www.linkedin.com/jobs/view/4119903912/?alternateChannel=search&refId=7aUkPXWfoV3dDHi3LuecSw%3D%3D&trackingId=gIpchlCWGKJD6AefCCK6Aw%3D%3D")
+    # result = jd_data("https://www.linkedin.com/jobs/view/4119903912/?alternateChannel=search&refId=7aUkPXWfoV3dDHi3LuecSw%3D%3D&trackingId=gIpchlCWGKJD6AefCCK6Aw%3D%3D")
+    # print(result)
+
+    result = pdf_data("CV_Ying_Nov24.pdf")
     print(result)
