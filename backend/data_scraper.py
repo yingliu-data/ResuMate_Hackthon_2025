@@ -3,42 +3,56 @@ import os
 from langchain_community.document_loaders import SeleniumURLLoader
 from github import Github
 from langchain_community.document_loaders import PyPDFLoader
-
+import validators
 
 def linkedin_data(url):
-    loader = SeleniumURLLoader(urls=[url])
-    data = loader.load()
+    if validators.url(url):
+        try:
+            loader = SeleniumURLLoader(urls=[url])
+            data = loader.load()
 
-    return " ".join([page.page_content for page in data])
+            return " ".join([page.page_content for page in data])
+        except:
+            return ""
+    return ""
 
 def jd_data(url):
-    loader = SeleniumURLLoader(urls=[url])
-    data = loader.load()
-    return " ".join([page.page_content for page in data])
+    if validators.url(url):
+        try:
+            loader = SeleniumURLLoader(urls=[url])
+            data = loader.load()
+
+            return data.page_content
+        except:
+            return ""
+    return ""
 
 def resume_data(file_path):
-    if file_path and os.path.exists(file_path):
+   try:
         loader = PyPDFLoader(file_path)
         pages = ""
         for i, page in enumerate(loader.lazy_load()):
             pages += f"page {i}: {page.page_content}"
         return pages
-    else:
-        return ""
+   except:
+       return ""
 
 def github_data(username):
-    client = Github()
+    try:
+        client = Github()
 
-    user = client.get_user(username)
-    repos = user.get_repos()
+        user = client.get_user(username)
+        repos = user.get_repos()
 
-    repo_info = ""
-    for repo in repos:
-        repo_info += f"[name: {repo.name}. "
-        repo_info += f"language: {repo.language}. "
-        repo_info += f"stars: {repo.stargazers_count}. "
-        repo_info += f"forks: {repo.forks_count}. ]"
-    return repo_info
+        repo_info = ""
+        for repo in repos:
+            repo_info += f"[name: {repo.name}. "
+            repo_info += f"language: {repo.language}. "
+            repo_info += f"stars: {repo.stargazers_count}. "
+            repo_info += f"forks: {repo.forks_count}. ]"
+        return repo_info
+    except:
+        return ""
 
 if __name__ == "__main__":
     # result = linkedin_data("https://www.linkedin.com/in/yingliu-data/")

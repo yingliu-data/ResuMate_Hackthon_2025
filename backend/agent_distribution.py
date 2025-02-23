@@ -14,13 +14,14 @@ from typing_extensions import TypedDict
 from generate_questions import InterviewBot
 from backend.text_speech_convert import text2speech, speech2text
 from data_scraper import linkedin_data, github_data, resume_data, jd_data
+import validators
 
 if not os.environ.get("GROQ_API_KEY"):
   os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
 
 
 
-llm = init_chat_model("llama-3.3-70b-versatile", model_provider="groq")
+llm = init_chat_model("llama-3.1-8b-instant", model_provider="groq")
 
 # Schema for structured output to use as routing logic
 class Route(BaseModel):
@@ -41,12 +42,16 @@ class State(TypedDict):
     person_context: str
     job_context: str
     user_id: int
+    flag: str
 
 class HrAgent():
     def __init__(self, user_profile=None):
         linkedindata = linkedin_data(user_profile["linkedin_link"])
+
         githubdata = github_data(user_profile["github_link"])
+
         jobdata = jd_data(user_profile["job_description"])
+
         cvdata = resume_data(user_profile["resume_path"])
         person_context = self.clean_person_context(f"""Linkedin info: {linkedindata} 
                                                         GitHub Info: {githubdata}
@@ -66,7 +71,6 @@ class HrAgent():
         self.router_builder.add_node("Strike_Interview", self.strike_interview)
         self.router_builder.add_node("generate_CV", self.generate_CV)
         self.router_builder.add_node("llm_call_router", self.llm_call_router)
-        self.router_builder.add_node("text_to_speech", self.text_to_speech)
 
         # Add edges to connect nodes
         self.router_builder.add_edge(START, "llm_call_router")
@@ -81,7 +85,6 @@ class HrAgent():
             },
         )
         self.router_builder.add_edge("generate_CoverLetter", END)
-        self.router_builder.add_edge("Strike_Interview", "text_to_speech")
         self.router_builder.add_edge("generate_CV", END)
 
         # Compile workflow
@@ -95,7 +98,24 @@ class HrAgent():
             "job_context": self.job_context,
             "person_context": self.person_context
         })
-        return state["output"]
+        output = {"message": None,
+                  "content": None}
+        if new_messgae and os.path.exists(new_messgae):
+            if state["flag"] != "Interview":
+                output["message"] = text2speech("Here is your " + state["flag"])
+                output["content"] = state["output"]
+            else:
+                output["message"] = text2speech("Here is your " + state["flag"])
+                output["content"] = None
+        else:
+            if state["flag"] != "Interview":
+                output["message"] = "Here is your " + state["flag"]
+                output["content"] = state["output"]
+            else:
+                output["message"] = state["output"]
+                output["content"] = None
+
+        return output
 
         # Nodes
     def generate_cover_letter(self, state: State):
@@ -136,22 +156,18 @@ class HrAgent():
                     Format it in a clear and concise markdown structure. No greetings, introductions, or unnecessary text.
                     """
         result = llm.invoke(prompt)
-        return {"output": result.content}
+        return {"output": result.content, "flag": "Cover Letter"}
 
     def strike_interview(self, state: State):
         """Write an Interview question"""
         _, bot_word = self.interviewBot.generate_interview_questions()
-        return {"output": bot_word}
-
-    def text_to_speech(self, state: State):
-        audio = text2speech(state["output"])
-        return {"output": audio}
+        return {"output": bot_word, "flag": "Interview"}
 
     def clean_person_context(self, person_context):
         prompt = f"""
             This is messy personal information from the user:
             {person_context}
-            Clean this data to a paragraph within 300 words.
+            Clean this data to a paragraph within 200 words.
             No greetings, introductions, or unnecessary text.
         """
         result = llm.invoke(prompt)
@@ -163,7 +179,7 @@ class HrAgent():
                     {job_context}
                     If the content is None, return None as well. If the content is not None:
                     There is only one job listed on the website, find the job and it's description first. 
-                    Clean the description to a paragraph within 300 words.
+                    Clean the description to a paragraph within 200 words.
                     No greetings, introductions, or unnecessary text.
                 """
         result = llm.invoke(prompt)
@@ -191,7 +207,7 @@ class HrAgent():
                 Format it in a clear and concise markdown structure. No greetings, introductions, or unnecessary text.
                 """
         result = llm.invoke(prompt)
-        return {"output": result.content}
+        return {"output": result.content, "flag": "CV"}
 
     def llm_call_router(self, state: State):
         """Route the input to the appropriate node"""
@@ -230,11 +246,12 @@ if __name__ == "__main__":
     user_profile["resume_path"] = None
     agent = HrAgent(user_profile=user_profile)
     output = agent("give me a interview")
+    print(output)
     # # Generating a unique file name for the output MP3 file
-    import uuid
-    save_file_path = f"{uuid.uuid4()}.mp3"
+    # import uuid
+    # save_file_path = f"{uuid.uuid4()}.mp3"
     # Writing the audio to a file
-    with open(save_file_path, "wb") as f:
-        for chunk in output:
-            if chunk:
-                f.write(chunk)
+    # with open(save_file_path, "wb") as f:
+    #     for chunk in output:
+    #         if chunk:
+    #             f.write(chunk)
