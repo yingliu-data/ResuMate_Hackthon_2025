@@ -1,4 +1,3 @@
-from aiohttp.web_fileresponse import content_type
 from fastapi import FastAPI, HTTPException, Form, UploadFile, File, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -6,8 +5,6 @@ from typing import Optional, Dict
 import uvicorn
 from datetime import datetime
 import os
-import tempfile
-# from agent_distribution import HrAgent
 
 # Initialize FastAPI app
 app = FastAPI(title="User Profile API")

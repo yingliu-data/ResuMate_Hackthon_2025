@@ -1,6 +1,5 @@
 import os
 from elevenlabs.client import ElevenLabs
-from elevenlabs import play
 from groq import Groq
 
 from dotenv import load_dotenv

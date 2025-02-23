@@ -1,7 +1,6 @@
 
 import os
 from dotenv import load_dotenv
-
 load_dotenv()
 
 from langchain.chat_models import init_chat_model
@@ -14,7 +13,7 @@ from typing_extensions import TypedDict
 from generate_questions import InterviewBot
 from backend.text_speech_convert import text2speech, speech2text
 from data_scraper import linkedin_data, github_data, resume_data, jd_data
-import validators
+
 
 if not os.environ.get("GROQ_API_KEY"):
   os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")

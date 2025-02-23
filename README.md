@@ -155,7 +155,6 @@ Then run
 ## 🔗 Links  
 
 - **Live Demo:** [Video]  
-- **Presentation Deck:** [Slides]  
 
 ---
 
