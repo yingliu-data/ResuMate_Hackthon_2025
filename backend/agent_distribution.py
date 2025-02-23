@@ -155,7 +155,9 @@ class HrAgent():
     
                     Format it in a clear and concise markdown structure. No greetings, introductions, or unnecessary text.
                     """
-        result = llm.invoke(prompt)
+        MAX_INPUT_TOKENS = 4000  # Adjust based on the expected output size
+        prompt = prompt[:MAX_INPUT_TOKENS]  
+        result = llm.invoke(prompt, max_tokens=2000)
         return {"output": result.content, "flag": "Cover Letter"}
 
     def strike_interview(self, state: State):
@@ -170,6 +172,8 @@ class HrAgent():
             Clean this data to a paragraph within 200 words.
             No greetings, introductions, or unnecessary text.
         """
+        MAX_INPUT_TOKENS = 4000  # Adjust based on the expected output size
+        prompt = prompt[:MAX_INPUT_TOKENS]  
         result = llm.invoke(prompt, max_tokens=2000)
         return result.content
 
@@ -182,6 +186,8 @@ class HrAgent():
                     Clean the description to a paragraph within 200 words.
                     No greetings, introductions, or unnecessary text.
                 """
+        MAX_INPUT_TOKENS = 4000  # Adjust based on the expected output size
+        prompt = prompt[:MAX_INPUT_TOKENS]  
         result = llm.invoke(prompt, max_tokens=2000)
         return result.content
 
@@ -206,6 +212,8 @@ class HrAgent():
     
                 Format it in a clear and concise markdown structure. No greetings, introductions, or unnecessary text.
                 """
+        MAX_INPUT_TOKENS = 4000  # Adjust based on the expected output size
+        prompt = prompt[:MAX_INPUT_TOKENS]  
         result = llm.invoke(prompt, max_tokens=2000)
         return {"output": result.content, "flag": "CV"}
 

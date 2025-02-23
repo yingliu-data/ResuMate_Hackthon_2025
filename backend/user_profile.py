@@ -120,9 +120,11 @@ async def user_profile(
 
         global hr_agent
         hr_agent = HrAgent(user_profile=user_profile)#
-        response = hr_agent("Generate CV").get("message")
-
-        return response
+        response = hr_agent("Generate CV")
+        message = {}
+        message['cv'] =response.get("content")
+        print(response)
+        return message
 
     except Exception as e:
         print("exception: ",e)
