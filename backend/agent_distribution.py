@@ -21,7 +21,7 @@ if not os.environ.get("GROQ_API_KEY"):
 
 
 
-llm = init_chat_model("mixtral-8x7b-32768", model_provider="groq")
+llm = init_chat_model("llama-3.3-70b-versatile", model_provider="groq")
 
 # Schema for structured output to use as routing logic
 class Route(BaseModel):
