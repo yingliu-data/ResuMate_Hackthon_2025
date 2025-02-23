@@ -45,9 +45,29 @@ cp .env.example .env
 ### 4. Run the Servers  
 Run the **frontend** and **backend** servers in separate terminal windows:  
 
-#### Frontend  
+#### Trouble Shooting  
+
+1. If you runs into an issue during start up of front end server, please run this below line and install again. Then try to run dev.
+```bash
+rm -rf node_modules package-lock.json
+```
 ```bash
 cd frontend/link-sculptor
+npm i
+npm run dev
+```
+2. If there an issue with rendering frontend and issue like one attached, 
+```bash
+[plugin:vite:import-analysis] Failed to resolve import "@/lib/utils" from "src/components/ui/card.tsx". Does the file exist?
+```
+1. Clone link-sculptor by running 
+```bash
+https://github.com/hexcodeblaster/link-sculptor
+```
+2. Run npm install and npm run dev again 
+```bash
+cd frontend/link-sculptor
+npm i
 npm run dev
 ```
 If this runs into an issue please run this below line and install again. Then try to run dev.
@@ -62,6 +82,16 @@ python user_profile.py
 ```
 
 ---
+
+
+#### Troubleshooting
+1. If there an issue with installation, please do this 
+```bash
+rm -rf node_modules package-lock.json
+```
+Then run 
+
+
 
 ## 📑 Run the Extension  
 1. Open **Google Chrome**.  
