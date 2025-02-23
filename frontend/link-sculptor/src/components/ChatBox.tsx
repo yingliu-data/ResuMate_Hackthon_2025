@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Mic, MicOff, Send, Play, Pause, Square } from 'lucide-react';
 import { Button } from './ui/button';
@@ -11,7 +12,11 @@ interface AudioMessage {
   audioUrl?: string;
 }
 
-const ChatBox = () => {
+interface ChatBoxProps {
+  onGenerateCV: () => Promise<void>;
+}
+
+const ChatBox: React.FC<ChatBoxProps> = ({ onGenerateCV }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<AudioMessage[]>([]);
@@ -23,7 +28,6 @@ const ChatBox = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Cleanup function
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -53,6 +57,12 @@ const ChatBox = () => {
       }
 
       const data = await response.json();
+
+      // Check if the response indicates CV generation is needed
+      if (data.generateCV) {
+        await onGenerateCV();
+      }
+
       setMessages(prev => [...prev, { text: data.message, sender: 'bot', type: 'text' }]);
       setMessage('');
     } catch (error) {

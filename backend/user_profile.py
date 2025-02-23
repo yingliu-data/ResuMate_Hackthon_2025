@@ -1,16 +1,18 @@
 from aiohttp.web_fileresponse import content_type
 from fastapi import FastAPI, HTTPException, Form, UploadFile, File, Response
 from fastapi.middleware.cors import CORSMiddleware
+from multipart import file_path
+from openai import files
 from pydantic import BaseModel
 from typing import Optional, Dict
 import uvicorn
 from datetime import datetime
 import os
 import tempfile
-# from agent_distribution import HrAgent
+from agent_distribution import HrAgent
 
 # Initialize FastAPI app
-app = FastAPI(title="User Profile API")
+app = FastAPI(title="User Resume Helper")
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,12 +39,10 @@ async def chat_endpoint(request: ChatRequest) -> Dict[str, str]:
 
         global hr_agent
         if hr_agent:
-            return_response = hr_agent(user_message)
+            return_response = hr_agent(user_message).get("message")
         else:
             return_response = "Please initialise your profile first by providing github username,LinkedIn profile link, and the job description url"
 
-        # Example bot response (Replace with actual logic)
-        # bot_response = f"🤖 Echo: {user_message}"
         return {"message": return_response}
 
     except Exception as e:
@@ -60,23 +60,27 @@ async def process_audio(audio: UploadFile = File(...)):
         file_extension = os.path.splitext(audio.filename)[-1] or ".webm"
         filename = f"{timestamp}_recording{file_extension}"
         file_path = os.path.join(UPLOAD_DIR, filename)
+        generate_cv = False
+        is_file_link = None
+        global hr_agent
+        if hr_agent:
+            agent_response = hr_agent(file_path)
+            if agent_response.get("content",False):
+                generate_cv = True
+            is_file_link = os.path.exists(agent_response.get("message",None) )
+        else:
+            agent_response = "Please initialise your profile first by providing github username,LinkedIn profile link, and the job description url"
+        audio_data = None
+        if is_file_link:
+            with open(os.path.join(agent_response.get("message"))) as audio_file:
+                audio_data = audio_file.read()
 
-        # Save the file
-        with open(file_path, "wb") as buffer:
-            buffer.write(await audio.read())
-
-        # Read the saved file to return it as response
-        with open(file_path, "rb") as audio_file:
-            audio_data = audio_file.read()
-
-        # return {"message": "Audio saved successfully",
-        #         "file_path": file_path,
-        #         "audioResponse":audio,
-        #         "content-type":"audio/webm"}
-
-        return Response(content=audio_data, media_type="audio/mpeg")
+        return_response = {"message":audio_data,
+                           "generateCV": generate_cv}
+        return return_response
 
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Error processing audio: {str(e)}")
 
 
@@ -114,17 +118,14 @@ async def user_profile(
 
             user_profile["resume_path"] = resume_filepath
 
-        # global hr_agent
-        # hr_agent = HrAgent(user_profile=user_profile)
-        # response = hr_agent("Generate CV")
-        # print("response: ", response)
-        cv_response = "John Doe\nSoftware Engineer\n123 Main Street\nCity, State 12345\n\nPROFESSIONAL SUMMARY\n-------------------\nDetail-oriented software engineer with 5 years of experience\n\nWORK EXPERIENCE\n--------------\nSenior Developer | Tech Company\n2020 - Present\n• Led development team\n• Managed projects\n\nEDUCATION\n---------\nBS Computer Science\nState University, 2019"
-        return {
-            "message": "CV created successfully",
-            "cv": cv_response
-        }
+        global hr_agent
+        hr_agent = HrAgent(user_profile=user_profile)#
+        response = hr_agent("Generate CV").get("message")
+
+        return response
 
     except Exception as e:
+        print("exception: ",e)
         raise HTTPException(status_code=500, detail=str(e))
 
 

@@ -12,9 +12,8 @@ from pydantic import BaseModel, Field
 from langgraph.graph import StateGraph, START, END
 from typing_extensions import TypedDict
 from generate_questions import InterviewBot
-from backend.text_speech_convert import text2speech, speech2text
+from text_speech_convert import text2speech, speech2text
 from data_scraper import linkedin_data, github_data, resume_data, jd_data
-import validators
 
 if not os.environ.get("GROQ_API_KEY"):
   os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
@@ -93,27 +92,27 @@ class HrAgent():
             new_message = speech2text(message)
         else:
             new_message = message
-        # state = self.router_workflow.invoke({
-        #     "input": new_messgae,
-        #     "job_context": self.job_context,
-        #     "person_context": self.person_context
-        # })
-        output = {"message": message,
-                  "content": "CV blab blah blah"}
-        # if new_messgae and os.path.exists(new_message):
-        #     if state["flag"] != "Interview":
-        #         output["message"] = text2speech("Here is your " + state["flag"])
-        #         output["content"] = state["output"]
-        #     else:
-        #         output["message"] = text2speech("Here is your " + state["flag"])
-        #         output["content"] = None
-        # else:
-        #     if state["flag"] != "Interview":
-        #         output["message"] = "Here is your " + state["flag"]
-        #         output["content"] = state["output"]
-        #     else:
-        #         output["message"] = state["output"]
-        #         output["content"] = None
+        state = self.router_workflow.invoke({
+            "input": new_message,
+            "job_context": self.job_context,
+            "person_context": self.person_context
+        })
+        output = {"message": None,
+                  "content": None}
+        if new_message and os.path.exists(new_message):
+            if state["flag"] != "Interview":
+                output["message"] = text2speech("Here is your " + state["flag"])
+                output["content"] = state["output"]
+            else:
+                output["message"] = text2speech("Here is your " + state["flag"])
+                output["content"] = None
+        else:
+            if state["flag"] != "Interview":
+                output["message"] = "Here is your " + state["flag"]
+                output["content"] = state["output"]
+            else:
+                output["message"] = state["output"]
+                output["content"] = None
 
         return output
 

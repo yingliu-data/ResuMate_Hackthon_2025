@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useImperativeHandle, forwardRef } from "react";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { toast } from "sonner";
@@ -8,7 +8,11 @@ import SocialLinkInput from "../components/SocialLinkInput";
 import ResultDisplay from "../components/ResultDisplay";
 import ChatBox from "../components/ChatBox";
 
-const Index = () => {
+export interface IndexRef {
+  generateCV: () => Promise<void>;
+}
+
+const Index = forwardRef<IndexRef>((_, ref) => {
   const [githubUsername, setGithubUsername] = useState("");
   const [linkedinLink, setLinkedinLink] = useState("");
   const [resume, setResume] = useState<File | null>(null);
@@ -65,6 +69,11 @@ const Index = () => {
       setIsLoading(false);
     }
   };
+
+  // Expose the generate function to parent components
+  useImperativeHandle(ref, () => ({
+    generateCV: handleSubmit
+  }));
 
   return (
     <div className="min-h-screen py-8 px-4 max-w-2xl mx-auto">
@@ -126,9 +135,11 @@ const Index = () => {
       </Card>
 
       {result && <ResultDisplay content={result} />}
-      <ChatBox />
+      <ChatBox onGenerateCV={handleSubmit} />
     </div>
   );
-};
+});
+
+Index.displayName = "Index";
 
 export default Index;

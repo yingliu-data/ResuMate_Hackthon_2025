@@ -172,3 +172,4 @@ test.py
 .pypirc
 */node_modules
 */link-sculptor/.git
+/frontend/link-sculptor/node_modules/
