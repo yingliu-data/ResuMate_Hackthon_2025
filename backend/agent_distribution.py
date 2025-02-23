@@ -21,7 +21,7 @@ if not os.environ.get("GROQ_API_KEY"):
 
 
 
-llm = init_chat_model("llama-3.1-8b-instant", model_provider="groq")
+llm = init_chat_model("mixtral-8x7b-32768", model_provider="groq")
 
 # Schema for structured output to use as routing logic
 class Route(BaseModel):
@@ -221,7 +221,6 @@ class HrAgent():
                 HumanMessage(content=state["input"]),
             ]
         )
-
         return {"decision": decision.step}
 
     # Conditional edge function to route to the appropriate node
@@ -243,15 +242,7 @@ if __name__ == "__main__":
     user_profile["linkedin_link"] = "https://www.linkedin.com/in/yingliu-data/"
     user_profile["github_link"] = "sophia172"
     user_profile["job_description"] = "software engineer"
-    user_profile["resume_path"] = None
+    user_profile["resume_path"] = "xyz"
     agent = HrAgent(user_profile=user_profile)
     output = agent("give me a interview")
     print(output)
-    # # Generating a unique file name for the output MP3 file
-    # import uuid
-    # save_file_path = f"{uuid.uuid4()}.mp3"
-    # Writing the audio to a file
-    # with open(save_file_path, "wb") as f:
-    #     for chunk in output:
-    #         if chunk:
-    #             f.write(chunk)

@@ -4,7 +4,11 @@
 The **ElevenLabs Hackathon 2025** challenges participants to build innovative AI-driven applications using ElevenLabs and partner models/tools. Our team took on this challenge to create a product that helps job seekers optimize their resumes and ace interviews using AI-powered tools.  
 
 ## 🚀 About ResuMate  
-ResuMate is an AI-powered interview and resume optimization assistant. It tailors resumes based on job descriptions, scrapes user profiles for insights, and conducts mock interviews to provide real-time feedback—helping job seekers put their best foot forward.  
+ResuMate is an AI-powered interview and resume optimisation assistant. 
+It tailors resumes based on 
+- job descriptions. 
+- Look into user profiles for insights.
+- Conducts mock interviews to provide real-time feedback—helping job seekers.  
 
 
 ## ⚙️ Installation (Run Locally)  
@@ -37,9 +41,7 @@ cp .env.example .env
 - `GROQ_API_KEY`: Your Groq API key.  
 - `ELEVENLABS_API_KEY`: Your ElevenLabs API key.  
 - `OPENAI_API_KEY`: Your OpenAI API key.  
-- `LANGSMITH_TRACING`: Boolean (`True` to enable tracing).  
-- `LANGSMITH_API_KEY`: Your Langsmith API Key.  
-
+- 
 ### 4. Run the Servers  
 Run the **frontend** and **backend** servers in separate terminal windows:  
 
@@ -95,19 +97,17 @@ python user_profile.py
 ---
 
 ## 🎯 Key Features  
-
+- **Tailored Resume**: Instantly generates a customised resume by analyzing user-provided information, including their existing resume, GitHub profile, job description, and LinkedIn profile.
 - **Enhanced Resume Optimization**: Automatically extracts key details from LinkedIn, GitHub, and the job role to refine and strengthen the resume.  
-- **Tailored Resume**: Instantly generates a customized resume by analyzing user-provided information, including their existing resume, GitHub profile, job description, and LinkedIn profile.  
-- **Personal Mock Interviewer**: Uses advanced LLM models and ElevenLabs to simulate interview questions, providing real-time feedback to improve response quality.  
-
+- **Tailored Cover Letter**: Instantly generates a customised cover letter by analysing user-provided information and the job description.
+- **Personal Mock Interviewer**: Uses advanced LLM models and ElevenLabs to simulate the interview process, asking job-specific questions and providing real-time feedback to improve response quality.
 ---
 
 ## 🛠️ Tech Stack  
 
 - **Frontend:** TypeScript (Lovable)  
 - **Backend:** Python  
-- **AI Models:** LLama, ElevenLabs, OpenAI  
-
+- **AI Models:** LLama, ElevenLabs, OpenAI, Langchain
 ---
 
 ## 🔗 Links  
