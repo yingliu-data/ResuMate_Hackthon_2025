@@ -16,6 +16,7 @@ cd ElevenLabs_Hackthon_2025
 ```
 
 ### 2. Install Dependencies  
+Open two terminals, one for Frontend and one for Backend.
 #### Frontend  
 ```bash
 cd frontend/link-sculptor
