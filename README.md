@@ -42,9 +42,21 @@ cp .env.example .env
 - `ELEVENLABS_API_KEY`: Your ElevenLabs API key.  
 - `OPENAI_API_KEY`: Your OpenAI API key.  
 - 
+
 ### 4. Run the Servers  
 Run the **frontend** and **backend** servers in separate terminal windows:  
 
+#### Frontend  
+```bash
+cd frontend/link-sculptor
+npm run dev
+```
+
+#### Backend  
+```bash
+cd backend
+python user_profile.py
+```
 #### Trouble Shooting  
 
 1. If you runs into an issue during start up of front end server, please run this below line and install again. Then try to run dev.
@@ -64,17 +76,17 @@ npm run dev
 ```bash
 https://github.com/hexcodeblaster/link-sculptor
 ```
-2. Run npm install and npm run dev again 
+2. Copy everything to link-sculptor file except git files.
+3.
+```bash
+rm -rf node_modules package-lock.json
+```
+4. Run npm install and npm run dev again 
 ```bash
 cd frontend/link-sculptor
 npm i
 npm run dev
 ```
-If this runs into an issue please run this below line and install again. Then try to run dev.
-```bash
-rm -rf node_modules package-lock.json
-```
-
 #### Backend  
 ```bash
 cd backend
