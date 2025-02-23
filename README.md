@@ -149,12 +149,12 @@ Then run
 
 ## 💡 Future Enhancements  
 
-- **Personalized Cover Letter Generation**  
+- **Add GitHub Code quality and competence analysis**  
 - **Coding Interview Feedback**  
 
 ---
 
 ## 📧 Contact  
 
-**Name:** Sophia Liu  
-📩 **Email:** sophia.j.liu@gmail.com  
+**Name:** Ying Liu  
+📩 **Email:** ying.liu@yingliu.site
