@@ -47,9 +47,7 @@ class State(TypedDict):
 class HrAgent():
     def __init__(self, user_profile=None):
         linkedindata = linkedin_data(user_profile["linkedin_link"])
-
         githubdata = github_data(user_profile["github_link"])
-
         jobdata = jd_data(user_profile["job_description"])
 
         cvdata = resume_data(user_profile["resume_path"])
@@ -90,30 +88,32 @@ class HrAgent():
         # Compile workflow
         self.router_workflow = self.router_builder.compile()
 
-    def __call__(self, new_messgae):
-        if new_messgae and os.path.exists(new_messgae):
-            new_messgae = speech2text(new_messgae)
-        state = self.router_workflow.invoke({
-            "input": new_messgae,
-            "job_context": self.job_context,
-            "person_context": self.person_context
-        })
-        output = {"message": None,
-                  "content": None}
-        if new_messgae and os.path.exists(new_messgae):
-            if state["flag"] != "Interview":
-                output["message"] = text2speech("Here is your " + state["flag"])
-                output["content"] = state["output"]
-            else:
-                output["message"] = text2speech("Here is your " + state["flag"])
-                output["content"] = None
+    def __call__(self, message):
+        if message and os.path.exists(message):
+            new_message = speech2text(message)
         else:
-            if state["flag"] != "Interview":
-                output["message"] = "Here is your " + state["flag"]
-                output["content"] = state["output"]
-            else:
-                output["message"] = state["output"]
-                output["content"] = None
+            new_message = message
+        # state = self.router_workflow.invoke({
+        #     "input": new_messgae,
+        #     "job_context": self.job_context,
+        #     "person_context": self.person_context
+        # })
+        output = {"message": message,
+                  "content": "CV blab blah blah"}
+        # if new_messgae and os.path.exists(new_message):
+        #     if state["flag"] != "Interview":
+        #         output["message"] = text2speech("Here is your " + state["flag"])
+        #         output["content"] = state["output"]
+        #     else:
+        #         output["message"] = text2speech("Here is your " + state["flag"])
+        #         output["content"] = None
+        # else:
+        #     if state["flag"] != "Interview":
+        #         output["message"] = "Here is your " + state["flag"]
+        #         output["content"] = state["output"]
+        #     else:
+        #         output["message"] = state["output"]
+        #         output["content"] = None
 
         return output
 
@@ -170,7 +170,7 @@ class HrAgent():
             Clean this data to a paragraph within 200 words.
             No greetings, introductions, or unnecessary text.
         """
-        result = llm.invoke(prompt)
+        result = llm.invoke(prompt, max_tokens=3000)
         return result.content
 
     def clean_job_context(self, job_context):
@@ -182,7 +182,7 @@ class HrAgent():
                     Clean the description to a paragraph within 200 words.
                     No greetings, introductions, or unnecessary text.
                 """
-        result = llm.invoke(prompt)
+        result = llm.invoke(prompt, max_tokens=3000)
         return result.content
 
     def generate_CV(self, state: State):
@@ -206,7 +206,7 @@ class HrAgent():
     
                 Format it in a clear and concise markdown structure. No greetings, introductions, or unnecessary text.
                 """
-        result = llm.invoke(prompt)
+        result = llm.invoke(prompt, max_tokens=3000)
         return {"output": result.content, "flag": "CV"}
 
     def llm_call_router(self, state: State):
