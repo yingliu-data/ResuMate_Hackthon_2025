@@ -15,7 +15,7 @@ It tailors resumes based on
 
 ### 1. Clone the Repository  
 ```bash
-git clone https://github.com/sophia172/ElevenLabs_Hackthon_2025
+git clone https://github.com/yingliu-data/ElevenLabs_Hackthon_2025
 cd ElevenLabs_Hackthon_2025
 ```
 
@@ -131,7 +131,7 @@ Then run
 - **Challenge:** Build AI Agents using ElevenLabs & partner models/tools  
 
 ### Team Members  
-- **Ying Liu** - [GitHub](https://github.com/sophia172)  
+- **Ying Liu** - [GitHub](https://github.com/yingliu-data)  
 - **Joenam Coutinho** - [GitHub](https://github.com/joenamcoutinho)  
 - **Tanuj Guha Thakurta** - [GitHub](https://github.com/hexcodeblaster)  
 - **Sahana Venkatesh** - [GitHub](https://github.com/Sahanave)  
